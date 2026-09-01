@@ -680,14 +680,7 @@ The original project covers:
 
 For the complete project story, architecture, model evaluation, and test results:
 
-[View the portfolio case study]()
+[View the portfolio case study](https://narmadapeddi9-narmada-peddi-portfo.editor.wix.com/html/editor/web/renderer/edit/c1efbf8c-029b-4113-977d-6616a08e4617?metaSiteId=35d98def-f6db-4767-acf1-d4b993f2bcc9)
 
 ---
 
-## 👤 Author
-
-**Narmada Peddi**
-
-- [LinkedIn](ADD_LINKEDIN_LINK)
-- [Portfolio](ADD_PORTFOLIO_LINK)
-- [GitHub](ADD_GITHUB_PROFILE_LINK)
