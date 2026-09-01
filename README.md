@@ -2,7 +2,7 @@
 
 A local analytics agent built on my e-commerce dimensional model to answer business questions using governed metrics, validated SQL, and practical guardrails.
 
-> This repository extends the [End-to-End E-commerce Analytics](ADD_ORIGINAL_REPOSITORY_LINK) project. The original project established the dimensional models and business metrics; this extension adds governed analytical Q&A on top of that foundation.
+> This repository extends the [End-to-End E-commerce Analytics](https://github.com/narmadapeddi/End-to-End-Ecommerce-Analytics) project. The original project established the dimensional models and business metrics; this extension adds governed analytical Q&A on top of that foundation.
 
 ---
 
