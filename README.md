@@ -331,7 +331,7 @@ end-to-end-ecommerce-analytics-agent/
     └── README.md
 ```
 ---
-## 🖥️ Running the Project Locally
+##  🖥️  Running the Project Locally
 
 The AI analytics agent runs locally using **Python, Ollama, Qwen, DuckDB, and dbt**.
 
@@ -658,7 +658,7 @@ It is intentionally designed with:
 - human review for important or ambiguous analytical decisions
 ---
 
-## Related Project
+## Related Analytics Foundation
 
 ### 🛒 End-to-End E-commerce Analytics
 
