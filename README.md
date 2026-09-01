@@ -2,6 +2,14 @@
 
 A local analytics agent built on my e-commerce dimensional model to answer business questions using governed metrics, validated SQL, and practical guardrails.
 
+![DuckDB](https://img.shields.io/badge/DuckDB-FFF000?style=flat-square&logo=duckdb&logoColor=000000)
+![Ollama](https://img.shields.io/badge/Ollama-000000?style=flat-square&logo=ollama&logoColor=FFFFFF)
+![Qwen3:1.7B](https://img.shields.io/badge/Qwen3%3A1.7B-6C5CE7?style=flat-square)
+![Local LLM](https://img.shields.io/badge/Local_LLM-2D3436?style=flat-square)
+![Agentic Analytics](https://img.shields.io/badge/Agentic_Analytics-8E44AD?style=flat-square)
+![SQL Guardrails](https://img.shields.io/badge/SQL_Guardrails-2980B9?style=flat-square)
+![Read--Only Execution](https://img.shields.io/badge/Read--Only_Execution-27AE60?style=flat-square)
+
 > This repository extends the [End-to-End E-commerce Analytics](https://github.com/narmadapeddi/End-to-End-Ecommerce-Analytics) project. The original project established the dimensional models and business metrics; this extension adds governed analytical Q&A on top of that foundation.
 
 ---
@@ -648,8 +656,6 @@ It is intentionally designed with:
 - ambiguity handling
 - deterministic guardrails for structurally sensitive analysis
 - human review for important or ambiguous analytical decisions
-
-The system is not presented as fully autonomous or production-ready. The goal is to demonstrate how LLM reasoning can be combined with governed analytics, database tools, and deterministic validation rather than blindly trusting generated SQL.
 ---
 
 ## Related Project
