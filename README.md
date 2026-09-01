@@ -293,27 +293,363 @@ Instead of depending on a larger LLM to generate every complex query, I selected
 ```text
 end-to-end-ecommerce-analytics-agent/
 ├── README.md
-├── ADD_PROJECT_FOLDERS_HERE
-└── ADD_PROJECT_FILES_HERE
+│── .gitignore
+│
+├── agent/
+│   ├── README.md
+│   ├── analytics_agent.py
+│   ├── database_tool.py
+│   ├── llm_client.py
+│   └── instructions.md
+│
+├── dbt/
+│   ├── README.md
+│   ├── dbt_project.yml
+│   └── models/
+│       ├── staging/
+│       ├── dimensions/
+│       ├── facts/
+│       └── analytics/
+│
+├── docs/
+│   ├── ai_agent.md
+│   ├── data_catalog.md
+│   └── metrics.md
+│
+├── database/
+│   └── README.md
+│
+└── data/
+    └── README.md
+```
+---
+## 🖥️ Running the Project Locally
+
+The AI analytics agent runs locally using **Python, Ollama, Qwen, DuckDB, and dbt**.
+
+The local workflow is:
+
+```text
+Olist CSV Data
+      ↓
+     dbt
+      ↓
+DuckDB Analytical Models
+      ↓
+AI Analytics Agent
+      ↓
+Local Qwen LLM via Ollama
+      ↓
+SQL Generation / Tool Execution
+      ↓
+DuckDB Results
+      ↓
+Validation
+      ↓
+Business Answer
 ```
 
-This section will be updated after the final repository files are organized.
+### Prerequisites
+
+Before running the project, install:
+
+- Python 3
+- Ollama
+- dbt Core
+- dbt-duckdb
+- DuckDB
+
+The project was developed using a local Ollama model, so no external LLM API key is required.
 
 ---
 
-## 🖥️ Running the Project Locally
+### 1. Clone the Repository
 
-Detailed setup instructions will be added after the repository structure and entry point are finalized.
+Clone the project and move into the project directory:
 
-The final instructions should cover:
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd end-to-end-ecommerce-analytics-agent
+```
 
-1. Installing the required local tools
-2. Downloading the selected Ollama model
-3. Preparing the DuckDB analytical database
-4. Configuring the grounding files
-5. Starting the agent
-6. Running the test scenarios
+---
 
+### 2. Create a Python Virtual Environment
+
+Create a virtual environment:
+
+```bash
+python3 -m venv .venv
+```
+
+Activate it on macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+On Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+Install the required Python packages:
+
+```bash
+pip install duckdb dbt-core dbt-duckdb
+```
+
+---
+
+### 3. Install and Start Ollama
+
+Install Ollama on your machine if it is not already installed.
+
+The final agent uses **Qwen3:1.7B** as the local LLM.
+
+Download the model:
+
+```bash
+ollama pull qwen3:1.7b
+```
+
+Verify that the model is available:
+
+```bash
+ollama list
+```
+
+Make sure Ollama is running before starting the analytics agent.
+
+The agent communicates with the local Ollama service through `agent/llm_client.py`.
+
+---
+
+### 4. Download the Olist Dataset
+
+This project uses the **Brazilian E-Commerce Public Dataset by Olist**.
+
+Download the dataset from Kaggle and place the source CSV files inside:
+
+```text
+data/raw/
+```
+
+The local source directory should contain:
+
+```text
+data/raw/
+├── olist_customers_dataset.csv
+├── olist_geolocation_dataset.csv
+├── olist_order_items_dataset.csv
+├── olist_order_payments_dataset.csv
+├── olist_order_reviews_dataset.csv
+├── olist_orders_dataset.csv
+├── olist_products_dataset.csv
+├── olist_sellers_dataset.csv
+└── product_category_name_translation.csv
+```
+
+The raw CSV files are not stored in this repository.
+
+---
+
+### 5. Configure DuckDB for dbt
+
+The analytical database is created locally using **DuckDB**.
+
+Configure a local dbt profile for the project and point it to:
+
+```text
+database/olist.duckdb
+```
+
+The dbt project transforms the source data into:
+
+```text
+Raw Source Data
+      ↓
+Staging Models
+      ↓
+Dimensions + Facts
+      ↓
+Analytics Models
+```
+
+The primary analytical fact tables used by the agent are:
+
+- `fact_customer_orders` — order grain
+- `fact_order_items` — order-item grain
+
+Additional analytical models support retention, cohort, and CLTV analysis.
+
+---
+
+### 6. Build the Analytical Models
+
+Navigate to the dbt project:
+
+```bash
+cd dbt
+```
+
+Verify the dbt connection:
+
+```bash
+dbt debug
+```
+
+Build the models:
+
+```bash
+dbt run
+```
+
+After the models are built successfully, the local analytical database will be available at:
+
+```text
+database/olist.duckdb
+```
+
+Return to the project root:
+
+```bash
+cd ..
+```
+
+---
+
+### 7. Grounding and Business Definitions
+
+Before querying the database, the agent uses project-specific grounding rather than relying only on the LLM's general knowledge.
+
+The main grounding files are:
+
+```text
+docs/metrics.md
+docs/data_catalog.md
+agent/instructions.md
+```
+
+Their responsibilities are:
+
+- **`metrics.md`** — governed business metric definitions
+- **`data_catalog.md`** — table grains, relationships, safe joins, and analytical usage
+- **`instructions.md`** — agent behavior, validation rules, and operating constraints
+
+For example, the project defines Average Order Value as:
+
+```text
+Delivered Revenue / Delivered Orders
+```
+
+This allows the agent to use the project's governed definition instead of assuming a generic AOV calculation.
+
+---
+
+### 8. Run the AI Analytics Agent
+
+Make sure:
+
+1. the Python virtual environment is active,
+2. Ollama is running,
+3. `qwen3:1.7b` is installed,
+4. the DuckDB database has been created, and
+5. the grounding files are available.
+
+Run the agent from the project root using the project's agent entry point.
+
+The agent workflow is:
+
+```text
+Business Question
+      ↓
+Grounding Selection
+      ↓
+Qwen Interpretation
+      ↓
+Analysis Planning + Guardrails
+      ↓
+SQL Generation / Deterministic Construction
+      ↓
+Read-Only Database Tool
+      ↓
+DuckDB Execution
+      ↓
+Result Validation
+      ↓
+Business Explanation
+```
+
+---
+
+### 9. Example Analytical Questions
+
+Questions used while validating the agent included:
+
+```text
+How many item-bearing customers do we have?
+```
+
+```text
+What is our average order value?
+```
+
+```text
+What is our repeat purchase rate?
+```
+
+```text
+How does CLTV differ between repeat and one-time customers?
+```
+
+```text
+What is total revenue by seller?
+```
+
+```text
+What is our average order value by product category?
+```
+
+Not every question is automatically executed.
+
+If a question contains a material ambiguity or an unsafe grain combination, the agent can stop and request clarification rather than silently generating potentially misleading SQL.
+
+---
+
+### 10. Local-Only Files
+
+The following files are intentionally kept local and are not included in the GitHub repository:
+
+```text
+.venv/
+database/olist.duckdb
+data/raw/*.csv
+dbt/target/
+dbt/logs/
+__pycache__/
+```
+
+These files contain local environments, generated artifacts, source datasets, or runtime outputs and can be recreated from the repository and source data.
+
+---
+
+## ⚠️ Project Scope
+
+This project is a portfolio implementation of a **grounded AI-assisted analytics agent**.
+
+It is intentionally designed with:
+
+- a local LLM
+- read-only database access
+- governed business definitions
+- grain-aware analytical validation
+- ambiguity handling
+- deterministic guardrails for structurally sensitive analysis
+- human review for important or ambiguous analytical decisions
+
+The system is not presented as fully autonomous or production-ready. The goal is to demonstrate how LLM reasoning can be combined with governed analytics, database tools, and deterministic validation rather than blindly trusting generated SQL.
 ---
 
 ## Related Project
@@ -330,7 +666,7 @@ The original project covers:
 - SQL business analysis
 - Power BI reporting
 
-[View the original analytics repository](ADD_ORIGINAL_REPOSITORY_LINK)
+[View the original analytics repository](https://github.com/narmadapeddi/End-to-End-Ecommerce-Analytics)
 
 ---
 
@@ -338,7 +674,7 @@ The original project covers:
 
 For the complete project story, architecture, model evaluation, and test results:
 
-[View the portfolio case study](ADD_PORTFOLIO_LINK)
+[View the portfolio case study]()
 
 ---
 
