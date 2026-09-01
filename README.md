@@ -1,4 +1,4 @@
-## 🤖 End-to-End E-commerce Analytics Agent
+# 🤖 End-to-End E-commerce Analytics Agent
 
 A local analytics agent built on my e-commerce dimensional model to answer business questions using governed metrics, validated SQL, and practical guardrails.
 
